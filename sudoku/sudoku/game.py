@@ -7,9 +7,12 @@ import random
 
 class Sudoku():
     
-    def __init__(self, filename:str) -> None:
+    def __init__(self, data:str, file=False) -> None:
         # Read sudoku
-        self._board:List[List[int]] = Sudoku.readsudoku(filename)
+        if file:
+            self._board:List[List[int]] = Sudoku.readsudoku(data)
+        else:
+            self._board:List[List[int]] = Sudoku.readsudoku_str(data)
         # Create Binaray SAT problem instance
         self._problem:BinCSAT[int, int] = BinCSAT()
         # Add variables to SAT problem
@@ -150,19 +153,26 @@ class Sudoku():
     @staticmethod
     def readsudoku(filename:str) -> List[int]:
         assert filename != None and filename != "", "Invalid filename"
-        line = ""
-        grid = [[-1 for i in range(9)] for j in range(9)]
         try:
             with open(filename, 'r') as file:
                 data = file.read()
-            lines = data.split("\n")
+                grid = Sudoku.readsudoku_str(data)
+        except Exception:
+            raise AttributeError("error opening file: "+filename)
+        return grid
+
+    @staticmethod
+    def readsudoku_str(string:str) -> List[int]:
+        grid = [[-1 for i in range(9)] for j in range(9)]
+        try:
+            lines = string.split("\n")
             for i in range(9):
                 line = lines[i]
                 for j in range(9):
                     num_value = int(line[j])
                     grid[i][j] = num_value
-        except Exception:
-            raise AttributeError("error opening file: "+filename)
+        except:
+            raise AttributeError("error reading string")
         return grid
     
     def to_file_string(self) -> str:

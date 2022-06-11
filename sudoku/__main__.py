@@ -1,10 +1,11 @@
-from random import seed, randint
-from sudoku.sudoku.game Sudoku
+from sudoku.sudoku.game import Sudoku
+from sudoku.examples.examples import get_random_sudoku
 import sys
+from argparse import ArgumentParser
 
 
-def main(filename):
-    sudoku = Sudoku(filename)
+def main(data:str, file:bool):
+    sudoku = Sudoku(data, file)
     print(sudoku)
 
     sol = sudoku.solve()
@@ -15,11 +16,14 @@ def main(filename):
 
 
 if __name__ == '__main__':
-    # Make sure that argument was passed
-    assert len(sys.argv) >= 2, "You need to give a sudoku file!"
-    filename = sys.argv[1]
-
+    parser = ArgumentParser()
+    parser.add_argument('--file', dest='filename', default='')
+    parser.add_argument('--random',  action='store_true')
+    arg = parser.parse_args()
     """Normal Execution
     """
-    main(filename)
+    if not arg.random:
+        main(arg.filename, True)
+    else:
+        main(get_random_sudoku(), False)
 
